@@ -1,0 +1,15 @@
+# UI
+streamlit
+
+# RAG pipeline
+langchain
+langchain-community
+langchain-openai
+langchain-text-splitters
+langchain-chroma
+chromadb
+pypdf
+
+# Workflow and configuration
+langgraph
+python-dotenv
