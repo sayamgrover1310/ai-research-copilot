@@ -4,9 +4,9 @@ A beginner-friendly AI-assisted research and study application, built step by st
 
 ## Current stage
 
-Document ingestion is implemented for local PDF and TXT files. It returns LangChain
-`Document` objects with source metadata. No Streamlit UI, chunking, embeddings, vector
-database, RAG pipeline, LangGraph workflow, or agents have been implemented yet.
+Document ingestion and chunking are implemented for local PDF and TXT files. They return
+LangChain `Document` objects with source and chunk metadata. No Streamlit UI, embeddings,
+vector database, RAG pipeline, LangGraph workflow, or agents have been implemented yet.
 
 ## Planned V1
 
@@ -40,6 +40,7 @@ add the required API key. Do not commit `.env`.
 ```text
 app.py                  Future Streamlit entry point
 src/ingestion/loader.py Path-based PDF and TXT document ingestion
+src/ingestion/chunker.py Splits ingested documents into overlapping text chunks
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)
