@@ -4,7 +4,7 @@ streamlit
 # RAG pipeline
 langchain
 langchain-community
-langchain-openai
+langchain-ollama
 langchain-text-splitters
 langchain-chroma
 chromadb

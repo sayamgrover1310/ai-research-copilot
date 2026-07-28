@@ -4,9 +4,9 @@ A beginner-friendly AI-assisted research and study application, built step by st
 
 ## Current stage
 
-Document ingestion and chunking are implemented for local PDF and TXT files. They return
-LangChain `Document` objects with source and chunk metadata. No Streamlit UI, embeddings,
-vector database, RAG pipeline, LangGraph workflow, or agents have been implemented yet.
+Document ingestion, chunking, and local embeddings are implemented for PDF and TXT files.
+No Streamlit UI, vector database, retrieval, RAG pipeline, LangGraph workflow, or agents
+have been implemented yet.
 
 ## Planned V1
 
@@ -19,6 +19,7 @@ vector database, RAG pipeline, LangGraph workflow, or agents have been implement
 
 - Python and Streamlit
 - LangChain for document and RAG components
+- Ollama with `nomic-embed-text` for local embeddings
 - Chroma for local vector storage
 - LangGraph for explicit request routing
 
@@ -41,6 +42,7 @@ add the required API key. Do not commit `.env`.
 app.py                  Future Streamlit entry point
 src/ingestion/loader.py Path-based PDF and TXT document ingestion
 src/ingestion/chunker.py Splits ingested documents into overlapping text chunks
+src/retrieval/embeddings.py Creates local embeddings for chunks and queries
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)
