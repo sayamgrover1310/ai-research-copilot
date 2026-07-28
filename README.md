@@ -4,9 +4,9 @@ A beginner-friendly AI-assisted research and study application, built step by st
 
 ## Current stage
 
-Document ingestion, chunking, local embeddings, and persistent local vector storage are
-implemented for PDF and TXT files. No Streamlit UI, retrieval, RAG pipeline, LangGraph
-workflow, or agents have been implemented yet.
+Document ingestion, chunking, local embeddings, persistent local vector storage, and
+semantic retrieval are implemented for PDF and TXT files. No Streamlit UI, RAG pipeline,
+LangGraph workflow, or agents have been implemented yet.
 
 ## Planned V1
 
@@ -44,6 +44,7 @@ src/ingestion/loader.py Path-based PDF and TXT document ingestion
 src/ingestion/chunker.py Splits ingested documents into overlapping text chunks
 src/retrieval/embeddings.py Creates local embeddings for chunks and queries
 src/retrieval/vector_store.py Persists chunks and vectors in local Chroma collections
+src/retrieval/retriever.py Returns relevant evidence chunks from Chroma
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)
