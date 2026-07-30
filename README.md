@@ -38,10 +38,18 @@ pip install -r requirements.txt
 Copy `.env.example` to `.env` to override local Ollama model names or storage paths. Do not
 commit `.env`.
 
+## Run the Streamlit app
+
+Start Ollama locally, make sure the configured models are available, then run:
+
+```bash
+streamlit run app.py
+```
+
 ## Project layout
 
 ```text
-app.py                  Future Streamlit entry point
+app.py                  Streamlit frontend for the existing backend capabilities
 src/ingestion/loader.py Path-based PDF and TXT document ingestion
 src/ingestion/chunker.py Splits ingested documents into overlapping text chunks
 src/retrieval/embeddings.py Creates local embeddings for chunks and queries
@@ -54,6 +62,7 @@ src/web_research/tavily_search.py Tavily-specific search and result normalizatio
 src/web_research/basic_web_research.py Builds grounded answers from one web search
 src/web_research/deep_research.py Plans, searches, deduplicates, and synthesizes bounded research
 src/study/study_mode.py Creates document-grounded summaries, quizzes, and flashcards
+src/services/workspace_service.py Reuses ingestion, chunking, and storage for UI uploads
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)

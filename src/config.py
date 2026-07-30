@@ -12,6 +12,7 @@ DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
 DEFAULT_OLLAMA_EMBEDDING_MODEL = "nomic-embed-text"
 DEFAULT_OLLAMA_GENERATION_MODEL = "qwen3:4b-instruct"
 DEFAULT_CHROMA_PERSIST_DIRECTORY = "data/chroma"
+DEFAULT_UPLOADS_DIRECTORY = "data/uploads"
 DEFAULT_WEB_SEARCH_MAX_RESULTS = 3
 DEFAULT_DEEP_RESEARCH_MAX_QUERIES = 4
 DEFAULT_DEEP_RESEARCH_RESULTS_PER_QUERY = 2
@@ -96,6 +97,12 @@ def get_study_flashcard_max_count() -> int:
 def get_chroma_persist_directory() -> Path:
     """Return the local directory where Chroma persists vector data."""
     directory = os.getenv("CHROMA_PERSIST_DIRECTORY", DEFAULT_CHROMA_PERSIST_DIRECTORY)
+    return Path(directory)
+
+
+def get_uploads_directory() -> Path:
+    """Return the local directory used to retain files uploaded through the UI."""
+    directory = os.getenv("UPLOADS_DIRECTORY", DEFAULT_UPLOADS_DIRECTORY)
     return Path(directory)
 
 
