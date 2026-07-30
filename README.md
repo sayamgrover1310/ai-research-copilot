@@ -5,9 +5,9 @@ A beginner-friendly AI-assisted research and study application, built step by st
 ## Current stage
 
 Document ingestion, chunking, local embeddings, persistent local vector storage, semantic
-retrieval, Basic RAG answer generation, and local-document source attribution are implemented
-for PDF and TXT files. No Streamlit UI, LangGraph workflow, web research, or agents have been
-implemented yet.
+retrieval, Basic RAG answer generation, local-document source attribution, and initial
+LangGraph routing are implemented for PDF and TXT files. No Streamlit UI, web research, or
+agents have been implemented yet.
 
 ## Planned V1
 
@@ -48,6 +48,7 @@ src/retrieval/vector_store.py Persists chunks and vectors in local Chroma collec
 src/retrieval/retriever.py Returns relevant evidence chunks from Chroma
 src/rag/basic_rag.py Retrieves evidence and generates a grounded answer with Ollama
 src/rag/citations.py Creates deterministic source records from retrieved Documents
+src/workflow/document_workflow.py Routes questions to document RAG or general chat
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)
