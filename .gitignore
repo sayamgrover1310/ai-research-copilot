@@ -1,11 +1,21 @@
 .venv/
 .env
+.streamlit/secrets.toml
 __pycache__/
 *.pyc
+.pytest_cache/
+.mypy_cache/
 .DS_Store
+*.swp
+*.swo
+.idea/
 
 # Runtime data created after users upload documents.
 data/uploads/*
 !data/uploads/.gitkeep
 data/chroma/*
 !data/chroma/.gitkeep
+
+# Keep only the safe, generic evaluation dataset in Git.
+data/evaluation/*
+!data/evaluation/sample_document_rag_evaluation.json

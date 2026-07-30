@@ -7,7 +7,8 @@ A beginner-friendly AI-assisted research and study application, built step by st
 Document ingestion, chunking, local embeddings, persistent local vector storage, semantic
 retrieval, Basic RAG answer generation, local-document source attribution, basic web research,
 bounded LangGraph Deep Research, and document-grounded Study Mode are implemented for PDF and TXT
-files. No Streamlit UI or autonomous agents have been implemented yet.
+files. A Streamlit UI and a small document-RAG evaluation framework are also implemented. No
+autonomous agents have been implemented.
 
 ## Planned V1
 
