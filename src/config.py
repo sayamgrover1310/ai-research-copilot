@@ -17,6 +17,8 @@ DEFAULT_DEEP_RESEARCH_MAX_QUERIES = 4
 DEFAULT_DEEP_RESEARCH_RESULTS_PER_QUERY = 2
 DEFAULT_DEEP_RESEARCH_MAX_EVIDENCE = 6
 DEFAULT_DEEP_RESEARCH_MAX_CONTENT_CHARS = 600
+DEFAULT_STUDY_QUIZ_MAX_QUESTIONS = 10
+DEFAULT_STUDY_FLASHCARD_MAX_COUNT = 20
 
 
 def get_ollama_base_url() -> str:
@@ -79,6 +81,16 @@ def get_deep_research_max_content_chars() -> int:
         "DEEP_RESEARCH_MAX_CONTENT_CHARS",
         DEFAULT_DEEP_RESEARCH_MAX_CONTENT_CHARS,
     )
+
+
+def get_study_quiz_max_questions() -> int:
+    """Return the maximum bounded number of quiz questions per request."""
+    return _get_positive_integer("STUDY_QUIZ_MAX_QUESTIONS", DEFAULT_STUDY_QUIZ_MAX_QUESTIONS)
+
+
+def get_study_flashcard_max_count() -> int:
+    """Return the maximum bounded number of flashcards per request."""
+    return _get_positive_integer("STUDY_FLASHCARD_MAX_COUNT", DEFAULT_STUDY_FLASHCARD_MAX_COUNT)
 
 
 def get_chroma_persist_directory() -> Path:
