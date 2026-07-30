@@ -6,6 +6,8 @@ from langchain_core.documents import Document
 
 from src.rag.basic_rag import RAGResult
 from src.rag.citations import CitationSource
+from src.web_research.basic_web_research import WebResearchResult
+from src.web_research.sources import WebSource
 from src.workflow.document_workflow import (
     build_general_prompt,
     determine_route,
@@ -52,12 +54,32 @@ class FakeRAGFunction:
         )
 
 
+class FakeWebResearchFunction:
+    def __init__(self) -> None:
+        self.questions: list[str] = []
+        self.source = WebSource(
+            label="[W1]",
+            title="RAG update",
+            url="https://example.com/rag-update",
+            content="A current RAG development.",
+            rank=1,
+        )
+
+    def __call__(self, question: str, *args: object, **kwargs: object) -> WebResearchResult:
+        self.questions.append(question)
+        return WebResearchResult(
+            answer="Current web evidence describes a RAG update.",
+            web_sources=[self.source],
+        )
+
+
 class DocumentWorkflowTests(unittest.TestCase):
     def setUp(self) -> None:
         self.vector_store = object()
         self.embedding_model = object()
         self.generation_model = FakeGenerationModel()
         self.rag_function = FakeRAGFunction()
+        self.web_research_function = FakeWebResearchFunction()
 
     def test_routes_explicit_document_question_to_document_rag(self) -> None:
         result = invoke_document_workflow(
@@ -66,12 +88,14 @@ class DocumentWorkflowTests(unittest.TestCase):
             self.embedding_model,
             generation_model=self.generation_model,
             rag_function=self.rag_function,
+            web_research_function=self.web_research_function,
         )
 
         self.assertEqual(result["route"], "document_rag")
         self.assertEqual(result["answer"], "RAG uses retrieved knowledge.")
         self.assertEqual(result["source_documents"], [self.rag_function.document])
         self.assertEqual(result["sources"], [self.rag_function.source])
+        self.assertEqual(result["web_sources"], [])
         self.assertEqual(len(self.rag_function.questions), 1)
         self.assertEqual(self.generation_model.prompts, [])
 
@@ -82,17 +106,37 @@ class DocumentWorkflowTests(unittest.TestCase):
             self.embedding_model,
             generation_model=self.generation_model,
             rag_function=self.rag_function,
+            web_research_function=self.web_research_function,
         )
 
         self.assertEqual(result["route"], "general")
         self.assertEqual(result["answer"], "Hello! How can I help with your studies?")
         self.assertEqual(result["source_documents"], [])
         self.assertEqual(result["sources"], [])
+        self.assertEqual(result["web_sources"], [])
         self.assertEqual(self.rag_function.questions, [])
         self.assertIn("Write a short greeting.", self.generation_model.prompts[0])
 
+    def test_routes_current_question_to_web_research(self) -> None:
+        result = invoke_document_workflow(
+            "What are the latest developments in RAG?",
+            self.vector_store,
+            self.embedding_model,
+            generation_model=self.generation_model,
+            rag_function=self.rag_function,
+            web_research_function=self.web_research_function,
+        )
+
+        self.assertEqual(result["route"], "web_research")
+        self.assertEqual(result["answer"], "Current web evidence describes a RAG update.")
+        self.assertEqual(result["source_documents"], [])
+        self.assertEqual(result["sources"], [])
+        self.assertEqual(result["web_sources"], [self.web_research_function.source])
+        self.assertEqual(self.web_research_function.questions, ["What are the latest developments in RAG?"])
+
     def test_router_is_deterministic(self) -> None:
         self.assertEqual(determine_route("Please summarize this PDF."), "document_rag")
+        self.assertEqual(determine_route("What are the latest developments in RAG?"), "web_research")
         self.assertEqual(determine_route("Write a short greeting."), "general")
 
     def test_rejects_an_empty_question(self) -> None:
@@ -103,6 +147,7 @@ class DocumentWorkflowTests(unittest.TestCase):
                 self.embedding_model,
                 generation_model=self.generation_model,
                 rag_function=self.rag_function,
+                web_research_function=self.web_research_function,
             )
 
     def test_general_prompt_is_small_and_contains_the_question(self) -> None:

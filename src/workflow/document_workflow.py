@@ -10,10 +10,13 @@ from langgraph.graph import END, START, StateGraph
 
 from src.rag.basic_rag import RAGResult, answer_question, get_generation_model
 from src.rag.citations import CitationSource
+from src.web_research.basic_web_research import WebResearchResult, answer_web_question
+from src.web_research.sources import WebSource
 
 
-Route = Literal["document_rag", "general"]
+Route = Literal["document_rag", "web_research", "general"]
 DOCUMENT_ROUTE_KEYWORDS = ("document", "uploaded", "upload", "pdf", "file", "my notes", "according to")
+WEB_RESEARCH_ROUTE_KEYWORDS = ("latest", "current", "today", "news", "recent", "web", "online", "developments")
 
 
 class WorkflowState(TypedDict, total=False):
@@ -24,14 +27,17 @@ class WorkflowState(TypedDict, total=False):
     answer: str
     source_documents: list[Document]
     sources: list[CitationSource]
+    web_sources: list[WebSource]
     error: str | None
 
 
 def determine_route(question: str) -> Route:
-    """Route explicit document questions to RAG; use general chat for everything else."""
+    """Route document and clearly current questions without an extra LLM call."""
     normalized_question = question.lower()
     if any(keyword in normalized_question for keyword in DOCUMENT_ROUTE_KEYWORDS):
         return "document_rag"
+    if any(keyword in normalized_question for keyword in WEB_RESEARCH_ROUTE_KEYWORDS):
+        return "web_research"
     return "general"
 
 
@@ -40,8 +46,9 @@ def create_document_workflow(
     embedding_model: Embeddings,
     generation_model: Any | None = None,
     rag_function: Callable[..., RAGResult] = answer_question,
+    web_research_function: Callable[..., WebResearchResult] = answer_web_question,
 ) -> Any:
-    """Compile a graph that routes a question to existing RAG or general chat."""
+    """Compile a graph that routes to document RAG, web research, or general chat."""
     workflow = StateGraph(WorkflowState)
 
     def router_node(state: WorkflowState) -> WorkflowState:
@@ -58,6 +65,20 @@ def create_document_workflow(
             "answer": result.answer,
             "source_documents": result.source_documents,
             "sources": result.sources,
+            "web_sources": [],
+            "error": result.error,
+        }
+
+    def web_research_node(state: WorkflowState) -> WorkflowState:
+        result = web_research_function(
+            state["question"],
+            generation_model=generation_model,
+        )
+        return {
+            "answer": result.answer,
+            "source_documents": [],
+            "sources": [],
+            "web_sources": result.web_sources,
             "error": result.error,
         }
 
@@ -73,6 +94,7 @@ def create_document_workflow(
                 "answer": "",
                 "source_documents": [],
                 "sources": [],
+                "web_sources": [],
                 "error": f"The local generation model could not produce a response: {error}",
             }
 
@@ -80,19 +102,26 @@ def create_document_workflow(
             "answer": answer,
             "source_documents": [],
             "sources": [],
+            "web_sources": [],
             "error": None,
         }
 
     workflow.add_node("router", router_node)
     workflow.add_node("document_rag", document_rag_node)
+    workflow.add_node("web_research", web_research_node)
     workflow.add_node("general", general_node)
     workflow.add_edge(START, "router")
     workflow.add_conditional_edges(
         "router",
         lambda state: state["route"],
-        {"document_rag": "document_rag", "general": "general"},
+        {
+            "document_rag": "document_rag",
+            "web_research": "web_research",
+            "general": "general",
+        },
     )
     workflow.add_edge("document_rag", END)
+    workflow.add_edge("web_research", END)
     workflow.add_edge("general", END)
 
     return workflow.compile()
@@ -104,6 +133,7 @@ def invoke_document_workflow(
     embedding_model: Embeddings,
     generation_model: Any | None = None,
     rag_function: Callable[..., RAGResult] = answer_question,
+    web_research_function: Callable[..., WebResearchResult] = answer_web_question,
 ) -> WorkflowState:
     """Validate one question, compile the workflow, and return its final state."""
     if not question.strip():
@@ -114,6 +144,7 @@ def invoke_document_workflow(
         embedding_model,
         generation_model=generation_model,
         rag_function=rag_function,
+        web_research_function=web_research_function,
     )
     return graph.invoke({"question": question})
 

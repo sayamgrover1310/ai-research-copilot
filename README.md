@@ -5,8 +5,8 @@ A beginner-friendly AI-assisted research and study application, built step by st
 ## Current stage
 
 Document ingestion, chunking, local embeddings, persistent local vector storage, semantic
-retrieval, Basic RAG answer generation, local-document source attribution, and initial
-LangGraph routing are implemented for PDF and TXT files. No Streamlit UI, web research, or
+retrieval, Basic RAG answer generation, local-document source attribution, and LangGraph routing
+with basic web research are implemented for PDF and TXT files. No Streamlit UI, Deep Research, or
 agents have been implemented yet.
 
 ## Planned V1
@@ -23,6 +23,7 @@ agents have been implemented yet.
 - Ollama with `nomic-embed-text` for local embeddings and `qwen3:4b-instruct` for local answers
 - Chroma for local vector storage
 - LangGraph for explicit request routing
+- Tavily for current web-search evidence
 
 ## Setup
 
@@ -49,6 +50,8 @@ src/retrieval/retriever.py Returns relevant evidence chunks from Chroma
 src/rag/basic_rag.py Retrieves evidence and generates a grounded answer with Ollama
 src/rag/citations.py Creates deterministic source records from retrieved Documents
 src/workflow/document_workflow.py Routes questions to document RAG or general chat
+src/web_research/tavily_search.py Tavily-specific search and result normalization
+src/web_research/basic_web_research.py Builds grounded answers from one web search
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)

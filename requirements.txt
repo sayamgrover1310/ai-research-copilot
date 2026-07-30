@@ -5,6 +5,7 @@ streamlit
 langchain
 langchain-community
 langchain-ollama
+langchain-tavily
 langchain-text-splitters
 langchain-chroma
 chromadb
