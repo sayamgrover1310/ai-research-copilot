@@ -5,9 +5,9 @@ A beginner-friendly AI-assisted research and study application, built step by st
 ## Current stage
 
 Document ingestion, chunking, local embeddings, persistent local vector storage, semantic
-retrieval, Basic RAG answer generation, local-document source attribution, and LangGraph routing
-with basic web research are implemented for PDF and TXT files. No Streamlit UI, Deep Research, or
-agents have been implemented yet.
+retrieval, Basic RAG answer generation, local-document source attribution, basic web research,
+and bounded LangGraph Deep Research are implemented for PDF and TXT files. No Streamlit UI or
+autonomous agents have been implemented yet.
 
 ## Planned V1
 
@@ -52,6 +52,7 @@ src/rag/citations.py Creates deterministic source records from retrieved Documen
 src/workflow/document_workflow.py Routes questions to document RAG or general chat
 src/web_research/tavily_search.py Tavily-specific search and result normalization
 src/web_research/basic_web_research.py Builds grounded answers from one web search
+src/web_research/deep_research.py Plans, searches, deduplicates, and synthesizes bounded research
 src/                    Application modules, added one feature at a time
 data/uploads/           Local uploaded files (not committed)
 data/chroma/            Local vector database files (not committed)
